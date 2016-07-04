@@ -108,10 +108,12 @@ func TestTradeHistory(t *testing.T) {
 		filter := HistoryFilter{}
 		tradeHistory, err := GetTradeHistoryAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), filter, "btc_usd")
 
-		Convey("No error should occur", func() {
-			So(err, ShouldBeNil)
+		if err != nil {
+			Convey("If error is returned, it should be 'no trades'", func() {
+				So(err, ShouldResemble, errors.New("no trades"))
+			})
+		}
 
-		})
 		Convey("Trade history should be retrieved", func() {
 			So(tradeHistory, ShouldNotBeNil)
 			So(len(tradeHistory), ShouldBeGreaterThanOrEqualTo, 0)
@@ -126,10 +128,12 @@ func TestTransactionHistory(t *testing.T) {
 		filter := HistoryFilter{}
 		transactionHistory, err := GetTransactionHistoryAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), filter)
 
-		Convey("No error should occur", func() {
-			So(err, ShouldBeNil)
+		if err != nil {
+			Convey("If error is returned, it should be 'no transactions'", func() {
+				So(err, ShouldResemble, errors.New("no transactions"))
+			})
+		}
 
-		})
 		Convey("Transaction history should be retrieved", func() {
 			So(transactionHistory, ShouldNotBeNil)
 			So(len(transactionHistory), ShouldBeGreaterThanOrEqualTo, 0)
