@@ -15,21 +15,22 @@ import (
 	"time"
 )
 
-var API_KEY = ""
-var API_SECRET = ""
-var lastNonce int64 = 0
+type TradeAPI struct {
+	API_KEY    string
+	API_SECRET string
+	lastNonce  int64
+}
 
 const TRADE_URL = "https://btc-e.com/tapi"
 
-func encodePostData(method string, params map[string]string) string {
+func (tapi *TradeAPI) encodePostData(method string, params map[string]string) string {
 	nonce := time.Now().Unix()
-	if nonce <= lastNonce {
-		nonce = nonce + 1
+	if nonce <= tapi.lastNonce {
+		nonce = tapi.lastNonce + 1
 	}
-	lastNonce = nonce
+	tapi.lastNonce = nonce
 	result := fmt.Sprintf("method=%s&nonce=%d", method, nonce)
 
-	// params are unordered, but after method and nonce
 	if len(params) > 0 {
 		v := url.Values{}
 		for key := range params {
@@ -46,13 +47,13 @@ func sign(secret string, payload string) string {
 	return hex.EncodeToString(mac.Sum(nil))
 }
 
-func call(method string, v interface{}, params map[string]string) error {
+func (tapi *TradeAPI) call(method string, v interface{}, params map[string]string) error {
 
-	postData := encodePostData(method, params)
+	postData := tapi.encodePostData(method, params)
 
 	req, err := http.NewRequest("POST", TRADE_URL, bytes.NewBufferString(postData))
-	req.Header.Add("Key", API_KEY)
-	req.Header.Add("Sign", sign(API_SECRET, postData))
+	req.Header.Add("Key", tapi.API_KEY)
+	req.Header.Add("Sign", sign(tapi.API_SECRET, postData))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Add("Content-Length", strconv.Itoa(len(postData)))
 
@@ -95,47 +96,49 @@ func marshalResponse(resp *http.Response, v interface{}) error {
 	return nil
 }
 
-func Auth(key string, secret string) {
-	API_KEY = key
-	API_SECRET = secret
+func (tapi *TradeAPI) Auth(key string, secret string) {
+	tapi.API_KEY = key
+	tapi.API_SECRET = secret
 }
-func GetAccountInfo() (AccountInfo, error) {
+
+func (tapi *TradeAPI) AccountInfo() (AccountInfo, error) {
 	info := AccountInfo{}
-	err := call("getInfo", &info, nil)
+	err := tapi.call("getInfo", &info, nil)
 	if err == nil {
 		return info, nil
 	} else {
 		return info, err
 	}
 }
-func GetAccountInfoAuth(key string, secret string) (AccountInfo, error) {
-	Auth(key, secret)
-	return GetAccountInfo()
+
+func (tapi *TradeAPI) AccountInfoAuth(key string, secret string) (AccountInfo, error) {
+	tapi.Auth(key, secret)
+	return tapi.AccountInfo()
 
 }
 
-func GetActiveOrders(pair string) (ActiveOrders, error) {
+func (tapi *TradeAPI) ActiveOrders(pair string) (ActiveOrders, error) {
 
 	orderParams := make(map[string]string, 4)
 	orderParams["pair"] = pair
 
 	activeOrders := make(ActiveOrders, 0)
-	err := call("ActiveOrders", &activeOrders, orderParams)
+	err := tapi.call("ActiveOrders", &activeOrders, orderParams)
 	if err == nil {
 		return activeOrders, nil
 	} else {
 		return activeOrders, err
 	}
 }
-func GetActiveOrdersAuth(key string, secret string, pair string) (ActiveOrders, error) {
-	Auth(key, secret)
-	return GetActiveOrders(pair)
 
+func (tapi *TradeAPI) ActiveOrdersAuth(key string, secret string, pair string) (ActiveOrders, error) {
+	tapi.Auth(key, secret)
+	return tapi.ActiveOrders(pair)
 }
 
-func OrderTrade(pair string, orderType string, rate float64, amount float64) (TradeResponse, error) {
+func (tapi *TradeAPI) Trade(pair string, orderType string, rate float64, amount float64) (Trade, error) {
 
-	tradeResponse := TradeResponse{}
+	tradeResponse := Trade{}
 
 	orderParams := make(map[string]string, 4)
 	orderParams["pair"] = pair
@@ -143,7 +146,7 @@ func OrderTrade(pair string, orderType string, rate float64, amount float64) (Tr
 	orderParams["rate"] = strconv.FormatFloat(rate, 'f', -1, 64)
 	orderParams["amount"] = strconv.FormatFloat(amount, 'f', -1, 64)
 
-	err := call("Trade", &tradeResponse, orderParams)
+	err := tapi.call("Trade", &tradeResponse, orderParams)
 
 	if err == nil {
 		return tradeResponse, nil
@@ -153,20 +156,20 @@ func OrderTrade(pair string, orderType string, rate float64, amount float64) (Tr
 
 }
 
-func OrderTradeAuth(key string, secret string, pair string, orderType string, rate float64, amount float64) (TradeResponse, error) {
-	Auth(key, secret)
-	return OrderTrade(pair, orderType, rate, amount)
+func (tapi *TradeAPI) TradeAuth(key string, secret string, pair string, orderType string, rate float64, amount float64) (Trade, error) {
+	tapi.Auth(key, secret)
+	return tapi.Trade(pair, orderType, rate, amount)
 
 }
 
-func GetOrderInfo(orderID string) (OrderInfos, error) {
+func (tapi *TradeAPI) OrderInfo(orderID string) (OrderInfo, error) {
 
-	orderInfo := OrderInfos{}
+	orderInfo := OrderInfo{}
 
 	orderParams := make(map[string]string, 1)
 	orderParams["order_id"] = orderID
 
-	err := call("OrderInfo", &orderInfo, orderParams)
+	err := tapi.call("OrderInfo", &orderInfo, orderParams)
 	if err == nil {
 		fmt.Println(err)
 		return orderInfo, nil
@@ -176,20 +179,20 @@ func GetOrderInfo(orderID string) (OrderInfos, error) {
 
 }
 
-func GetOrderInfoAuth(key string, secret string, orderID string) (OrderInfos, error) {
-	Auth(key, secret)
-	return GetOrderInfo(orderID)
+func (tapi *TradeAPI) OrderInfoAuth(key string, secret string, orderID string) (OrderInfo, error) {
+	tapi.Auth(key, secret)
+	return tapi.OrderInfo(orderID)
 
 }
 
-func CancelOrder(orderID string) (CancelOrderResponse, error) {
+func (tapi *TradeAPI) CancelOrder(orderID string) (CancelOrder, error) {
 
-	cancelReponse := CancelOrderResponse{}
+	cancelReponse := CancelOrder{}
 
 	orderParams := make(map[string]string, 1)
 	orderParams["order_id"] = orderID
 
-	err := call("CancelOrder", &cancelReponse, orderParams)
+	err := tapi.call("CancelOrder", &cancelReponse, orderParams)
 
 	if err == nil {
 		return cancelReponse, nil
@@ -199,13 +202,13 @@ func CancelOrder(orderID string) (CancelOrderResponse, error) {
 
 }
 
-func CancelOrderAuth(key string, secret string, orderID string) (CancelOrderResponse, error) {
-	Auth(key, secret)
-	return CancelOrder(orderID)
+func (tapi *TradeAPI) CancelOrderAuth(key string, secret string, orderID string) (CancelOrder, error) {
+	tapi.Auth(key, secret)
+	return tapi.CancelOrder(orderID)
 
 }
 
-func GetTradeHistory(filter HistoryFilter, pair string) (TradeHistory, error) {
+func (tapi *TradeAPI) TradeHistory(filter HistoryFilter, pair string) (TradeHistory, error) {
 
 	tradeHistory := TradeHistory{}
 
@@ -214,7 +217,7 @@ func GetTradeHistory(filter HistoryFilter, pair string) (TradeHistory, error) {
 		historyParams["pair"] = pair
 	}
 
-	err := call("TradeHistory", &tradeHistory, historyParams)
+	err := tapi.call("TradeHistory", &tradeHistory, historyParams)
 
 	if err == nil {
 		return tradeHistory, nil
@@ -224,19 +227,19 @@ func GetTradeHistory(filter HistoryFilter, pair string) (TradeHistory, error) {
 
 }
 
-func GetTradeHistoryAuth(key string, secret string, filter HistoryFilter, pair string) (TradeHistory, error) {
-	Auth(key, secret)
-	return GetTradeHistory(filter, pair)
+func (tapi *TradeAPI) TradeHistoryAuth(key string, secret string, filter HistoryFilter, pair string) (TradeHistory, error) {
+	tapi.Auth(key, secret)
+	return tapi.TradeHistory(filter, pair)
 
 }
 
-func GetTransactionHistory(filter HistoryFilter) (TransactionHistory, error) {
+func (tapi *TradeAPI) TransactionHistory(filter HistoryFilter) (TransactionHistory, error) {
 
 	transactionHistory := TransactionHistory{}
 
 	historyParams := historyFilterParams(filter)
 
-	err := call("TransHistory", &transactionHistory, historyParams)
+	err := tapi.call("TransHistory", &transactionHistory, historyParams)
 
 	if err == nil {
 		return transactionHistory, nil
@@ -246,11 +249,12 @@ func GetTransactionHistory(filter HistoryFilter) (TransactionHistory, error) {
 
 }
 
-func GetTransactionHistoryAuth(key string, secret string, filter HistoryFilter) (TransactionHistory, error) {
-	Auth(key, secret)
-	return GetTransactionHistory(filter)
+func (tapi *TradeAPI) TransactionHistoryAuth(key string, secret string, filter HistoryFilter) (TransactionHistory, error) {
+	tapi.Auth(key, secret)
+	return tapi.TransactionHistory(filter)
 
 }
+
 func historyFilterParams(filter HistoryFilter) map[string]string {
 	params := make(map[string]string, 0)
 
@@ -278,16 +282,16 @@ func historyFilterParams(filter HistoryFilter) map[string]string {
 	return params
 }
 
-func WithdrawCoin(coinName string, amount float64, address string) (WithdrawCoinResponse, error) {
+func (tapi *TradeAPI) WithdrawCoin(coinName string, amount float64, address string) (WithdrawCoin, error) {
 
-	response := WithdrawCoinResponse{}
+	response := WithdrawCoin{}
 
 	orderParams := make(map[string]string, 3)
 	orderParams["coinName"] = coinName
 	orderParams["amount"] = strconv.FormatFloat(amount, 'f', -1, 64)
 	orderParams["address"] = address
 
-	err := call("WithdrawCoin", &response, orderParams)
+	err := tapi.call("WithdrawCoin", &response, orderParams)
 
 	if err == nil {
 		return response, nil
@@ -297,21 +301,21 @@ func WithdrawCoin(coinName string, amount float64, address string) (WithdrawCoin
 
 }
 
-func WithdrawCoinAuth(key string, secret string, coinName string, amount float64, address string) (WithdrawCoinResponse, error) {
-	Auth(key, secret)
-	return WithdrawCoin(coinName, amount, address)
+func (tapi *TradeAPI) WithdrawCoinAuth(key string, secret string, coinName string, amount float64, address string) (WithdrawCoin, error) {
+	tapi.Auth(key, secret)
+	return tapi.WithdrawCoin(coinName, amount, address)
 
 }
 
-func CreateCoupon(currency string, amount float64) (CreateCouponResponse, error) {
+func (tapi *TradeAPI) CreateCoupon(currency string, amount float64) (CreateCoupon, error) {
 
-	response := CreateCouponResponse{}
+	response := CreateCoupon{}
 
 	params := make(map[string]string, 2)
 	params["currency"] = currency
 	params["amount"] = strconv.FormatFloat(amount, 'f', -1, 64)
 
-	err := call("CreateCoupon", &response, params)
+	err := tapi.call("CreateCoupon", &response, params)
 
 	if err == nil {
 		return response, nil
@@ -321,19 +325,19 @@ func CreateCoupon(currency string, amount float64) (CreateCouponResponse, error)
 
 }
 
-func CreateCouponAuth(key string, secret string, currency string, amount float64) (CreateCouponResponse, error) {
-	Auth(key, secret)
-	return CreateCoupon(currency, amount)
+func (tapi *TradeAPI) CreateCouponAuth(key string, secret string, currency string, amount float64) (CreateCoupon, error) {
+	tapi.Auth(key, secret)
+	return tapi.CreateCoupon(currency, amount)
 }
 
-func RedeemCoupon(coupon string) (RedeemCouponResponse, error) {
+func (tapi *TradeAPI) RedeemCoupon(coupon string) (RedeemCoupon, error) {
 
-	response := RedeemCouponResponse{}
+	response := RedeemCoupon{}
 
 	params := make(map[string]string, 1)
 	params["coupon"] = coupon
 
-	err := call("RedeemCoupon", &response, params)
+	err := tapi.call("RedeemCoupon", &response, params)
 
 	if err == nil {
 		return response, nil
@@ -343,7 +347,7 @@ func RedeemCoupon(coupon string) (RedeemCouponResponse, error) {
 
 }
 
-func RedeemCouponAuth(key string, secret string, coupon string) (RedeemCouponResponse, error) {
-	Auth(key, secret)
-	return RedeemCoupon(coupon)
+func (tapi *TradeAPI) RedeemCouponAuth(key string, secret string, coupon string) (RedeemCoupon, error) {
+	tapi.Auth(key, secret)
+	return tapi.RedeemCoupon(coupon)
 }

@@ -3,19 +3,22 @@ package btce
 import (
 	"errors"
 	"fmt"
-	. "github.com/smartystreets/goconvey/convey"
 	"os"
 	"strconv"
 	"testing"
 	"time"
+
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 const SLEEP = 5
 
+var tapi = TradeAPI{}
+
 func TestAccountInfo(t *testing.T) {
 	time.Sleep(SLEEP * time.Second)
 	Convey("Account information data", t, func() {
-		info, err := GetAccountInfoAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"))
+		info, err := tapi.AccountInfoAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"))
 		Convey("No error should occur", func() {
 			So(err, ShouldBeNil)
 		})
@@ -32,7 +35,7 @@ func TestAccountInfo(t *testing.T) {
 func TestActiveOrders(t *testing.T) {
 	time.Sleep(SLEEP * time.Second)
 	Convey("Active orders data", t, func() {
-		orders, err := GetActiveOrdersAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "btc_usd")
+		orders, err := tapi.ActiveOrdersAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "btc_usd")
 
 		if err != nil {
 			Convey("If error is returned, it should be 'no orders'", func() {
@@ -50,7 +53,7 @@ func TestActiveOrders(t *testing.T) {
 func TestOrderTrade(t *testing.T) {
 	time.Sleep(SLEEP * time.Second)
 	Convey("Trade new order", t, func() {
-		orderResponse, err := OrderTradeAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "btc_usd", "buy", 900, 1)
+		orderResponse, err := tapi.TradeAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "btc_usd", "buy", 900, 1)
 
 		if err != nil {
 			Convey("If error is returned, it should be 'not enough USD'", func() {
@@ -66,9 +69,9 @@ func TestOrderTrade(t *testing.T) {
 
 func TestOrderInfo(t *testing.T) {
 	time.Sleep(SLEEP * time.Second)
-	orderID := "1140186935"
+	orderID := "1"
 	Convey("Get order info", t, func() {
-		orderResponse, err := GetOrderInfoAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), orderID)
+		orderResponse, err := tapi.OrderInfoAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), orderID)
 
 		if err != nil {
 			Convey("If error is returned, it should be 'invalid order'", func() {
@@ -85,9 +88,9 @@ func TestOrderInfo(t *testing.T) {
 
 func TestCancelOrder(t *testing.T) {
 	time.Sleep(SLEEP * time.Second)
-	orderID := "1140186997"
+	orderID := "1"
 	Convey("Cancel order", t, func() {
-		orderResponse, err := CancelOrderAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), orderID)
+		orderResponse, err := tapi.CancelOrderAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), orderID)
 
 		if err != nil {
 			Convey("If error is returned, it should be 'bad status'", func() {
@@ -106,7 +109,7 @@ func TestTradeHistory(t *testing.T) {
 	Convey("Trade history data", t, func() {
 
 		filter := HistoryFilter{}
-		tradeHistory, err := GetTradeHistoryAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), filter, "btc_usd")
+		tradeHistory, err := tapi.TradeHistoryAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), filter, "btc_usd")
 
 		if err != nil {
 			Convey("If error is returned, it should be 'no trades'", func() {
@@ -126,7 +129,7 @@ func TestTransactionHistory(t *testing.T) {
 	Convey("Transaction history data", t, func() {
 
 		filter := HistoryFilter{}
-		transactionHistory, err := GetTransactionHistoryAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), filter)
+		transactionHistory, err := tapi.TransactionHistoryAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), filter)
 
 		if err != nil {
 			Convey("If error is returned, it should be 'no transactions'", func() {
@@ -145,7 +148,7 @@ func TestWithdrawCoin(t *testing.T) {
 	time.Sleep(SLEEP * time.Second)
 	Convey("Withdraw coin", t, func() {
 
-		response, err := WithdrawCoinAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "BTC", 0.001, "address")
+		response, err := tapi.WithdrawCoinAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "BTC", 0.001, "address")
 
 		if err != nil {
 			Convey("If error is returned, it should be 'api permission'", func() {
@@ -164,7 +167,7 @@ func TestCreateCoupon(t *testing.T) {
 	time.Sleep(SLEEP * time.Second)
 	Convey("Create coupon", t, func() {
 
-		response, err := CreateCouponAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "BTC", 0.001)
+		response, err := tapi.CreateCouponAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "BTC", 0.001)
 
 		if err != nil {
 			Convey("If error is returned, it should be 'api permission'", func() {
@@ -183,7 +186,7 @@ func TestRedeemCoupon(t *testing.T) {
 	time.Sleep(SLEEP * time.Second)
 	Convey("Redeem coupon", t, func() {
 
-		response, err := RedeemCouponAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "BTC-USD-XYZ")
+		response, err := tapi.RedeemCouponAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "BTC-USD-XYZ")
 
 		if err != nil {
 			Convey("If error is returned, it should be 'api permission'", func() {

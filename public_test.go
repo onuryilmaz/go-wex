@@ -5,10 +5,12 @@ import (
 	"testing"
 )
 
+var api = PublicAPI{}
+
 func TestTicker(t *testing.T) {
 
 	Convey("Ticker data for BTC-USD", t, func() {
-		tickers, err := GetTicker([]string{"btc_usd"})
+		tickers, err := api.Ticker([]string{"btc_usd"})
 
 		Convey("No error should occur", func() {
 			So(err, ShouldBeNil)
@@ -26,7 +28,7 @@ func TestTicker(t *testing.T) {
 func TestInfo(t *testing.T) {
 
 	Convey("Information data", t, func() {
-		information, err := GetInfo()
+		information, err := api.Info()
 
 		Convey("No error should occur", func() {
 			So(err, ShouldBeNil)
@@ -34,7 +36,7 @@ func TestInfo(t *testing.T) {
 
 		Convey("Information data for 'btc_usd' should be returned", func() {
 			So(information, ShouldHaveSameTypeAs, Info{})
-			So(information.Pairs["btc_usd"], ShouldHaveSameTypeAs, PairInfo{})
+			So(information.Pairs["btc_usd"], ShouldHaveSameTypeAs, InfoPair{})
 		})
 	})
 
@@ -43,7 +45,7 @@ func TestInfo(t *testing.T) {
 func TestDepth(t *testing.T) {
 
 	Convey("Depth data", t, func() {
-		depth, err := GetDepth([]string{"btc_usd"})
+		depth, err := api.Depth([]string{"btc_usd"})
 
 		Convey("No error should occur", func() {
 			So(err, ShouldBeNil)
@@ -60,7 +62,7 @@ func TestDepth(t *testing.T) {
 func TestTrade(t *testing.T) {
 
 	Convey("Trade data", t, func() {
-		trade, err := GetTrade([]string{"btc_usd"})
+		trade, err := api.Trade([]string{"btc_usd"})
 
 		Convey("No error should occur", func() {
 			So(err, ShouldBeNil)
@@ -69,7 +71,6 @@ func TestTrade(t *testing.T) {
 		Convey("Trade data for 'btc_usd' should be returned", func() {
 			So(trade, ShouldHaveSameTypeAs, Trade{})
 			So(len(trade["btc_usd"]), ShouldBeGreaterThanOrEqualTo, 0)
-			//So(trade["btc_usd"][0].TID, ShouldBeGreaterThanOrEqualTo, 0)
 		})
 	})
 

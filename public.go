@@ -5,9 +5,11 @@ import (
 	"net/http"
 )
 
+type PublicAPI struct{}
+
 const API_URL = "https://btc-e.com/api/3/"
 
-func GetTicker(currency []string) (Ticker, error) {
+func (api *PublicAPI) Ticker(currency []string) (Ticker, error) {
 
 	url := API_URL + "ticker/"
 	for _, c := range currency {
@@ -25,7 +27,7 @@ func GetTicker(currency []string) (Ticker, error) {
 
 }
 
-func GetInfo() (Info, error) {
+func (api *PublicAPI) Info() (Info, error) {
 
 	url := API_URL + "info"
 	r, err := http.Get(url)
@@ -40,7 +42,7 @@ func GetInfo() (Info, error) {
 
 }
 
-func GetDepth(currency []string) (Depth, error) {
+func (api *PublicAPI) Depth(currency []string) (Depth, error) {
 
 	url := API_URL + "depth/"
 	for _, c := range currency {
@@ -58,7 +60,7 @@ func GetDepth(currency []string) (Depth, error) {
 
 }
 
-func GetTrade(currency []string) (Trade, error) {
+func (api *PublicAPI) Trade(currency []string) (Trade, error) {
 
 	url := API_URL + "trades/"
 	for _, c := range currency {

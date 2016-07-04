@@ -21,10 +21,10 @@ type TickerPair struct {
 
 type Info struct {
 	ServerTime int64               `json:"server_time"`
-	Pairs      map[string]PairInfo `json:"pairs"`
+	Pairs      map[string]InfoPair `json:"pairs"`
 }
 
-type PairInfo struct {
+type InfoPair struct {
 	DecimalPlaces int     `json:"decimal_places"`
 	MinPrice      float64 `json:"min_price"`
 	MaxPrice      float64 `json:"max_price"`
@@ -83,14 +83,14 @@ type ActiveOrder struct {
 
 type ActiveOrders map[string]ActiveOrder
 
-type TradeResponse struct {
+type Trade struct {
 	Received float64            `json:"received"`
 	Remains  float64            `json:"remains"`
 	OrderID  string             `json:"order_id"`
 	Funds    map[string]float64 `json:"funds"`
 }
 
-type OrderInfo struct {
+type OrderInfoItem struct {
 	Pair             string  `json:"pair"`
 	Type             string  `json:"type"`
 	StartAmount      float64 `json:"start_amount"`
@@ -100,9 +100,9 @@ type OrderInfo struct {
 	Status           int     `json:"status"`
 }
 
-type OrderInfos map[string]OrderInfo
+type OrderInfo map[string]OrderInfoItem
 
-type CancelOrderResponse struct {
+type CancelOrder struct {
 	OrderID int                `json:"order_id"`
 	Funds   map[string]float64 `json:"funds"`
 }
@@ -140,19 +140,19 @@ type TransactionHistoryItem struct {
 
 type TransactionHistory map[string]TransactionHistoryItem
 
-type WithdrawCoinResponse struct {
+type WithdrawCoin struct {
 	TransactionID int                `json:"tId"`
 	AmountSent    float64            `json:"amountSent"`
 	Funds         map[string]float64 `json:"funds"`
 }
 
-type CreateCouponResponse struct {
+type CreateCoupon struct {
 	Coupon        string             `json:"coupon"`
 	TransactionID int                `json:"transID"`
 	Funds         map[string]float64 `json:"funds"`
 }
 
-type RedeemCouponResponse struct {
+type RedeemCoupon struct {
 	CouponAmount   string             `json:"couponAmount"`
 	CouponCurrency string             `json:"couponCurrency"`
 	TransactionID  int                `json:"transID"`
