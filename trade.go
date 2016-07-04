@@ -136,9 +136,9 @@ func (tapi *TradeAPI) ActiveOrdersAuth(key string, secret string, pair string) (
 	return tapi.ActiveOrders(pair)
 }
 
-func (tapi *TradeAPI) Trade(pair string, orderType string, rate float64, amount float64) (Trade, error) {
+func (tapi *TradeAPI) Trade(pair string, orderType string, rate float64, amount float64) (TradeResponse, error) {
 
-	tradeResponse := Trade{}
+	tradeResponse := TradeResponse{}
 
 	orderParams := make(map[string]string, 4)
 	orderParams["pair"] = pair
@@ -156,7 +156,7 @@ func (tapi *TradeAPI) Trade(pair string, orderType string, rate float64, amount 
 
 }
 
-func (tapi *TradeAPI) TradeAuth(key string, secret string, pair string, orderType string, rate float64, amount float64) (Trade, error) {
+func (tapi *TradeAPI) TradeAuth(key string, secret string, pair string, orderType string, rate float64, amount float64) (TradeResponse, error) {
 	tapi.Auth(key, secret)
 	return tapi.Trade(pair, orderType, rate, amount)
 
