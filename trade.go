@@ -26,7 +26,7 @@ type TradeAPI struct {
 	lastNonce  int64
 }
 
-const TRADE_URL = "https://btc-e.com/tapi"
+const trade_URL = "https://btc-e.com/tapi"
 
 // Auth provides API key and secret setting for Trade API
 func (tapi *TradeAPI) Auth(key string, secret string) {
@@ -73,10 +73,8 @@ func (tapi *TradeAPI) Trade(pair string, orderType string, rate float64, amount 
 
 	if err == nil {
 		return tradeResponse, nil
-	} else {
-		return tradeResponse, err
 	}
-
+	return tradeResponse, err
 }
 
 // TradeAuth provides Trade capability with authorization
@@ -97,9 +95,8 @@ func (tapi *TradeAPI) ActiveOrders(pair string) (ActiveOrders, error) {
 	err := tapi.call("ActiveOrders", &activeOrders, orderParams)
 	if err == nil {
 		return activeOrders, nil
-	} else {
-		return activeOrders, err
 	}
+	return activeOrders, err
 }
 
 // ActiveOrdersAuth provides ActiveOrders capability with authorization
@@ -118,12 +115,9 @@ func (tapi *TradeAPI) OrderInfo(orderID string) (OrderInfo, error) {
 
 	err := tapi.call("OrderInfo", &orderInfo, orderParams)
 	if err == nil {
-		fmt.Println(err)
 		return orderInfo, nil
-	} else {
-		return orderInfo, err
 	}
-
+	return orderInfo, err
 }
 
 // OrderInfoAuth provides OrderInfo capability with authorization
@@ -145,10 +139,8 @@ func (tapi *TradeAPI) CancelOrder(orderID string) (CancelOrder, error) {
 
 	if err == nil {
 		return cancelReponse, nil
-	} else {
-		return cancelReponse, err
 	}
-
+	return cancelReponse, err
 }
 
 // CancelOrderAuth provides CancelOrder capability with authorization
@@ -172,10 +164,8 @@ func (tapi *TradeAPI) TradeHistory(filter HistoryFilter, pair string) (TradeHist
 
 	if err == nil {
 		return tradeHistory, nil
-	} else {
-		return tradeHistory, err
 	}
-
+	return tradeHistory, err
 }
 
 // TradeHistoryAuth provides TradeHistory capability with authorization
@@ -196,10 +186,8 @@ func (tapi *TradeAPI) TransactionHistory(filter HistoryFilter) (TransactionHisto
 
 	if err == nil {
 		return transactionHistory, nil
-	} else {
-		return transactionHistory, err
 	}
-
+	return transactionHistory, err
 }
 
 // TransactionHistoryAuth provides TransactionHistory capability with authorization
@@ -223,10 +211,8 @@ func (tapi *TradeAPI) WithdrawCoin(coinName string, amount float64, address stri
 
 	if err == nil {
 		return response, nil
-	} else {
-		return response, err
 	}
-
+	return response, err
 }
 
 // WithdrawCoinAuth provides WithdrawCoin capability with authorization
@@ -249,9 +235,8 @@ func (tapi *TradeAPI) CreateCoupon(currency string, amount float64) (CreateCoupo
 
 	if err == nil {
 		return response, nil
-	} else {
-		return response, err
 	}
+	return response, err
 }
 
 // CreateCouponAuth provides CreateCoupon capability with authorization
@@ -272,9 +257,8 @@ func (tapi *TradeAPI) RedeemCoupon(coupon string) (RedeemCoupon, error) {
 
 	if err == nil {
 		return response, nil
-	} else {
-		return response, err
 	}
+	return response, err
 }
 
 // RedeemCouponAuth provides RedeemCoupon capability with authorization
@@ -311,7 +295,7 @@ func (tapi *TradeAPI) call(method string, v interface{}, params map[string]strin
 
 	postData := tapi.encodePostData(method, params)
 
-	req, err := http.NewRequest("POST", TRADE_URL, bytes.NewBufferString(postData))
+	req, err := http.NewRequest("POST", trade_URL, bytes.NewBufferString(postData))
 	req.Header.Add("Key", tapi.API_KEY)
 	req.Header.Add("Sign", sign(tapi.API_SECRET, postData))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
@@ -332,24 +316,20 @@ func marshalResponse(resp *http.Response, v interface{}) error {
 	defer resp.Body.Close()
 	bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("ReadAll() failed: %v", err)
 		return err
 	}
 
 	data := Response{}
 
 	if err = json.Unmarshal(bytes, &data); err != nil {
-		fmt.Println(err)
 		return err
 	}
 
 	if data.Success == 1 {
 		if err = json.Unmarshal(data.Return, &v); err != nil {
-			fmt.Println(err)
 			return err
 		}
 	} else {
-		fmt.Println(data.Error)
 		return errors.New(data.Error)
 	}
 

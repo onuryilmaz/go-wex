@@ -2,7 +2,6 @@ package btce
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"strconv"
 	"testing"
@@ -42,7 +41,6 @@ func TestActiveOrders(t *testing.T) {
 				So(err, ShouldResemble, errors.New("no orders"))
 			})
 		} else {
-			fmt.Println(orders)
 			Convey("If no error is returned, 'order' should have length", func() {
 				So(len(orders), ShouldBeGreaterThanOrEqualTo, 1)
 			})
