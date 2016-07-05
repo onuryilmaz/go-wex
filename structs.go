@@ -42,7 +42,7 @@ type DepthPair struct {
 
 type DepthItem []float64
 
-type Trade map[string]TradePair
+type Trades map[string]TradePair
 type TradePair []TradeItem
 type TradeItem struct {
 	Type      string  `json:"type"`

@@ -39,13 +39,12 @@ func TestInfo(t *testing.T) {
 			So(information.Pairs["btc_usd"], ShouldHaveSameTypeAs, InfoPair{})
 		})
 	})
-
 }
 
 func TestDepth(t *testing.T) {
 
 	Convey("Depth data", t, func() {
-		depth, err := api.Depth([]string{"btc_usd"})
+		depth, err := api.Depth([]string{"btc_usd"}, 1)
 
 		Convey("No error should occur", func() {
 			So(err, ShouldBeNil)
@@ -56,22 +55,20 @@ func TestDepth(t *testing.T) {
 			So(depth["btc_usd"], ShouldHaveSameTypeAs, DepthPair{})
 		})
 	})
-
 }
 
 func TestTrade(t *testing.T) {
 
 	Convey("Trade data", t, func() {
-		trade, err := api.Trade([]string{"btc_usd"})
+		trade, err := api.Trades([]string{"btc_usd"}, 1)
 
 		Convey("No error should occur", func() {
 			So(err, ShouldBeNil)
 		})
 
 		Convey("Trade data for 'btc_usd' should be returned", func() {
-			So(trade, ShouldHaveSameTypeAs, Trade{})
+			So(trade, ShouldHaveSameTypeAs, Trades{})
 			So(len(trade["btc_usd"]), ShouldBeGreaterThanOrEqualTo, 0)
 		})
 	})
-
 }

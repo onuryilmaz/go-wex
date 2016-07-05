@@ -18,7 +18,7 @@ var tapi = TradeAPI{}
 func TestAccountInfo(t *testing.T) {
 	time.Sleep(SLEEP * time.Second)
 	Convey("Account information data", t, func() {
-		info, err := tapi.AccountInfoAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"))
+		info, err := tapi.GetInfoAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"))
 		Convey("No error should occur", func() {
 			So(err, ShouldBeNil)
 		})
