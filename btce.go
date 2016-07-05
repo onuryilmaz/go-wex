@@ -1,3 +1,4 @@
+// Package btce
 // TODO package level documentation
 // Include example usage
 package btce

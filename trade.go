@@ -26,7 +26,7 @@ type TradeAPI struct {
 	lastNonce  int64
 }
 
-const trade_URL = "https://btc-e.com/tapi"
+const tradeURL = "https://btc-e.com/tapi"
 
 // Auth provides API key and secret setting for Trade API
 func (tapi *TradeAPI) Auth(key string, secret string) {
@@ -41,9 +41,8 @@ func (tapi *TradeAPI) GetInfo() (AccountInfo, error) {
 	err := tapi.call("getInfo", &info, nil)
 	if err == nil {
 		return info, nil
-	} else {
-		return info, err
 	}
+	return info, err
 }
 
 // GetInfoAuth provides GetInfo capability with authorization
@@ -295,7 +294,7 @@ func (tapi *TradeAPI) call(method string, v interface{}, params map[string]strin
 
 	postData := tapi.encodePostData(method, params)
 
-	req, err := http.NewRequest("POST", trade_URL, bytes.NewBufferString(postData))
+	req, err := http.NewRequest("POST", tradeURL, bytes.NewBufferString(postData))
 	req.Header.Add("Key", tapi.API_KEY)
 	req.Header.Add("Sign", sign(tapi.API_SECRET, postData))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
