@@ -28,7 +28,7 @@ func main() {
 
 	info, err := api.Trade.GetInfoAuth("API_KEY", "API_SECRET")
 	if err == nil {
-		fmt.Printf("BTC amount: %.3f \n", info.Funds["btc_usd"])
+		fmt.Printf("BTC amount: %.3f \n", info.Funds["btc"])
 	}
 }
 ```
