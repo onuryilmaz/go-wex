@@ -267,12 +267,11 @@ func (tapi *TradeAPI) RedeemCouponAuth(key string, secret string, coupon string)
 }
 
 func (tapi *TradeAPI) encodePostData(method string, params map[string]string) string {
-	nonce := time.Now().Unix()
-	if nonce <= tapi.lastNonce {
-		nonce = tapi.lastNonce + 1
-	}
-	tapi.lastNonce = nonce
-	result := fmt.Sprintf("method=%s&nonce=%d", method, nonce)
+    if tapi.lastNonce == 0 {
+        tapi.lastNonce = time.Now().Unix()
+    }
+    tapi.lastNonce += 1
+	result := fmt.Sprintf("method=%s&nonce=%d", method, tapi.lastNonce)
 
 	if len(params) > 0 {
 		v := url.Values{}
