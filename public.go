@@ -19,8 +19,10 @@ func (api *PublicAPI) Info() (Info, error) {
 
 	if err == nil {
 		data := Info{}
-		json.NewDecoder(r.Body).Decode(&data)
-		return data, nil
+		err = json.NewDecoder(r.Body).Decode(&data)
+		if err == nil {
+			return data, nil
+		}
 	}
 	return Info{}, err
 }
@@ -37,8 +39,10 @@ func (api *PublicAPI) Ticker(currency []string) (Ticker, error) {
 
 	if err == nil {
 		data := make(Ticker, len(currency))
-		json.NewDecoder(r.Body).Decode(&data)
-		return data, nil
+		err = json.NewDecoder(r.Body).Decode(&data)
+		if err == nil {
+			return data, nil
+		}
 	}
 
 	return nil, err
@@ -58,8 +62,10 @@ func (api *PublicAPI) Depth(currency []string, limit int) (Depth, error) {
 
 	if err == nil {
 		data := make(Depth, len(currency))
-		json.NewDecoder(r.Body).Decode(&data)
-		return data, nil
+		err = json.NewDecoder(r.Body).Decode(&data)
+		if err == nil {
+			return data, nil
+		}
 	}
 
 	return nil, err
@@ -80,8 +86,10 @@ func (api *PublicAPI) Trades(currency []string, limit int) (Trades, error) {
 
 	if err == nil {
 		data := make(Trades, len(currency))
-		json.NewDecoder(r.Body).Decode(&data)
-		return data, nil
+		err = json.NewDecoder(r.Body).Decode(&data)
+		if err == nil {
+			return data, nil
+		}
 	}
 
 	return nil, err
