@@ -17,7 +17,7 @@ import (
 
 // TradeAPI allows to trade on the exchange and receive information about the account.
 //
-// To use this API, you need to create an API key.  An API key can be created in your Profile in the API Keys section. After creating an API key you’ll receive a key and a secret.
+// To use this API, you need to create an API key. An API key can be created in your Profile in the API Keys section. After creating an API key you’ll receive a key and a secret.
 // Note that the Secret can be received only during the first hour after the creation of the Key.
 // API key information is used for authentication.
 type TradeAPI struct {
@@ -267,10 +267,10 @@ func (tapi *TradeAPI) RedeemCouponAuth(key string, secret string, coupon string)
 }
 
 func (tapi *TradeAPI) encodePostData(method string, params map[string]string) string {
-    if tapi.lastNonce == 0 {
-        tapi.lastNonce = time.Now().Unix()
-    }
-    tapi.lastNonce += 1
+	if tapi.lastNonce == 0 {
+		tapi.lastNonce = time.Now().Unix()
+	}
+	tapi.lastNonce += 1
 	result := fmt.Sprintf("method=%s&nonce=%d", method, tapi.lastNonce)
 
 	if len(params) > 0 {
@@ -294,6 +294,11 @@ func (tapi *TradeAPI) call(method string, v interface{}, params map[string]strin
 	postData := tapi.encodePostData(method, params)
 
 	req, err := http.NewRequest("POST", tradeURL, bytes.NewBufferString(postData))
+
+	if err != nil {
+		return err
+	}
+
 	req.Header.Add("Key", tapi.API_KEY)
 	req.Header.Add("Sign", sign(tapi.API_SECRET, postData))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
