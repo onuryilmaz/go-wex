@@ -6,7 +6,6 @@ import (
 	"crypto/sha512"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -333,10 +332,19 @@ func marshalResponse(resp *http.Response, v interface{}) error {
 			return err
 		}
 	} else {
-		return errors.New(data.Error)
+		return TradeError{data.Error}
 	}
 
 	return nil
+}
+
+// custom error type for server/trading errors
+type TradeError struct {
+	msg string
+}
+
+func (e TradeError) Error() string {
+	return fmt.Sprintf("trading error: %v", e.msg)
 }
 
 // historyFilterParams creates map[string]string mapping of HistoryFilter
