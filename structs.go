@@ -86,7 +86,7 @@ type ActiveOrders map[string]ActiveOrder
 type TradeResponse struct {
 	Received float64            `json:"received"`
 	Remains  float64            `json:"remains"`
-	OrderID  string             `json:"order_id"`
+	OrderID  int                `json:"order_id"`
 	Funds    map[string]float64 `json:"funds"`
 }
 
