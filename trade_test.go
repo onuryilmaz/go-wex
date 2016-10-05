@@ -14,8 +14,17 @@ const SLEEP = 5
 
 var tapi = TradeAPI{}
 
-func TestAccountInfo(t *testing.T) {
+func CheckAPI(t *testing.T) {
 	time.Sleep(SLEEP * time.Second)
+	if os.Getenv("API_KEY_TEST") == "" || os.Getenv("API_SECRET_TEST") == "" {
+		t.SkipNow()
+	}
+}
+
+func TestAccountInfo(t *testing.T) {
+
+	CheckAPI(t)
+
 	Convey("Account information data", t, func() {
 		info, err := tapi.GetInfoAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"))
 		Convey("No error should occur", func() {
@@ -32,7 +41,9 @@ func TestAccountInfo(t *testing.T) {
 }
 
 func TestActiveOrders(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	Convey("Active orders data", t, func() {
 		orders, err := tapi.ActiveOrdersAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "btc_usd")
 
@@ -49,7 +60,9 @@ func TestActiveOrders(t *testing.T) {
 }
 
 func TestOrderTrade(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	Convey("Trade new order", t, func() {
 		orderResponse, err := tapi.TradeAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "btc_usd", "buy", 900, 1)
 
@@ -66,7 +79,9 @@ func TestOrderTrade(t *testing.T) {
 }
 
 func TestOrderInfo(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	orderID := "1"
 	Convey("Get order info", t, func() {
 		orderResponse, err := tapi.OrderInfoAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), orderID)
@@ -85,7 +100,9 @@ func TestOrderInfo(t *testing.T) {
 }
 
 func TestCancelOrder(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	orderID := "1"
 	Convey("Cancel order", t, func() {
 		orderResponse, err := tapi.CancelOrderAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), orderID)
@@ -103,7 +120,9 @@ func TestCancelOrder(t *testing.T) {
 }
 
 func TestTradeHistory(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	Convey("Trade history data", t, func() {
 
 		filter := HistoryFilter{}
@@ -123,7 +142,9 @@ func TestTradeHistory(t *testing.T) {
 }
 
 func TestTransactionHistory(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	Convey("Transaction history data", t, func() {
 
 		filter := HistoryFilter{}
@@ -143,7 +164,9 @@ func TestTransactionHistory(t *testing.T) {
 }
 
 func TestWithdrawCoin(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	Convey("Withdraw coin", t, func() {
 
 		response, err := tapi.WithdrawCoinAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "BTC", 0.001, "address")
@@ -162,7 +185,9 @@ func TestWithdrawCoin(t *testing.T) {
 }
 
 func TestCreateCoupon(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	Convey("Create coupon", t, func() {
 
 		response, err := tapi.CreateCouponAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "BTC", 0.001)
@@ -181,7 +206,9 @@ func TestCreateCoupon(t *testing.T) {
 }
 
 func TestRedeemCoupon(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	Convey("Redeem coupon", t, func() {
 
 		response, err := tapi.RedeemCouponAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "BTC-USD-XYZ")
