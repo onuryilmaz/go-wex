@@ -1,7 +1,6 @@
 package btce
 
 import (
-	"errors"
 	"os"
 	"strconv"
 	"testing"
@@ -49,7 +48,7 @@ func TestActiveOrders(t *testing.T) {
 
 		if err != nil {
 			Convey("If error is returned, it should be 'no orders'", func() {
-				So(err, ShouldResemble, errors.New("no orders"))
+				So(err, ShouldResemble, TradeError{msg: "no orders"})
 			})
 		} else {
 			Convey("If no error is returned, 'order' should have length", func() {
@@ -68,7 +67,7 @@ func TestOrderTrade(t *testing.T) {
 
 		if err != nil {
 			Convey("If error is returned, it should be 'not enough USD'", func() {
-				So(err, ShouldResemble, errors.New("It is not enough USD for purchase"))
+				So(err, ShouldResemble, TradeError{msg: "It is not enough USD for purchase"})
 			})
 		} else {
 			Convey("If no error is returned, 'btc_usd' amount should appear", func() {
@@ -88,7 +87,7 @@ func TestOrderInfo(t *testing.T) {
 
 		if err != nil {
 			Convey("If error is returned, it should be 'invalid order'", func() {
-				So(err, ShouldResemble, errors.New("invalid order"))
+				So(err, ShouldResemble, TradeError{msg: "invalid order"})
 			})
 		} else {
 			Convey("If no error is returned, order information should be returned", func() {
@@ -109,7 +108,7 @@ func TestCancelOrder(t *testing.T) {
 
 		if err != nil {
 			Convey("If error is returned, it should be 'bad status'", func() {
-				So(err, ShouldResemble, errors.New("bad status"))
+				So(err, ShouldResemble, TradeError{msg: "bad status"})
 			})
 		} else {
 			Convey("If no error is returned, same order id should be returned", func() {
@@ -130,7 +129,7 @@ func TestTradeHistory(t *testing.T) {
 
 		if err != nil {
 			Convey("If error is returned, it should be 'no trades'", func() {
-				So(err, ShouldResemble, errors.New("no trades"))
+				So(err, ShouldResemble, TradeError{msg: "no trades"})
 			})
 		}
 
@@ -152,7 +151,7 @@ func TestTransactionHistory(t *testing.T) {
 
 		if err != nil {
 			Convey("If error is returned, it should be 'no transactions'", func() {
-				So(err, ShouldResemble, errors.New("no transactions"))
+				So(err, ShouldResemble, TradeError{msg: "no transactions"})
 			})
 		}
 
@@ -173,7 +172,7 @@ func TestWithdrawCoin(t *testing.T) {
 
 		if err != nil {
 			Convey("If error is returned, it should be 'api permission'", func() {
-				So(err, ShouldResemble, errors.New("api key dont have withdraw permission"))
+				So(err, ShouldResemble, TradeError{msg: "api key dont have withdraw permission"})
 			})
 		} else {
 			Convey("If no error is returned, withdraw reponse should be returned", func() {
@@ -194,7 +193,7 @@ func TestCreateCoupon(t *testing.T) {
 
 		if err != nil {
 			Convey("If error is returned, it should be 'api permission'", func() {
-				So(err, ShouldResemble, errors.New("api key dont have coupon permission"))
+				So(err, ShouldResemble, TradeError{msg: "api key dont have coupon permission"})
 			})
 		} else {
 			Convey("If no error is returned, withdraw reponse should be returned", func() {
@@ -215,7 +214,7 @@ func TestRedeemCoupon(t *testing.T) {
 
 		if err != nil {
 			Convey("If error is returned, it should be 'api permission'", func() {
-				So(err, ShouldResemble, errors.New("api key dont have coupon permission"))
+				So(err, ShouldResemble, TradeError{msg: "api key dont have coupon permission"})
 			})
 		} else {
 			Convey("If no error is returned, withdraw reponse should be returned", func() {

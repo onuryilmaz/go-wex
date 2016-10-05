@@ -48,7 +48,7 @@ type TradeItem struct {
 	Type      string  `json:"type"`
 	Price     float64 `json:"price"`
 	Amount    float64 `json:"amount"`
-	TID       string  `json:"tid"`
+	TID       int64   `json:"tid"`
 	Timestamp int64   `json:"timestamp"`
 }
 
