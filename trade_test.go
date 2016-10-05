@@ -1,7 +1,6 @@
 package btce
 
 import (
-	"errors"
 	"os"
 	"strconv"
 	"testing"
@@ -14,8 +13,17 @@ const SLEEP = 5
 
 var tapi = TradeAPI{}
 
-func TestAccountInfo(t *testing.T) {
+func CheckAPI(t *testing.T) {
 	time.Sleep(SLEEP * time.Second)
+	if os.Getenv("API_KEY_TEST") == "" || os.Getenv("API_SECRET_TEST") == "" {
+		t.SkipNow()
+	}
+}
+
+func TestAccountInfo(t *testing.T) {
+
+	CheckAPI(t)
+
 	Convey("Account information data", t, func() {
 		info, err := tapi.GetInfoAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"))
 		Convey("No error should occur", func() {
@@ -32,13 +40,15 @@ func TestAccountInfo(t *testing.T) {
 }
 
 func TestActiveOrders(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	Convey("Active orders data", t, func() {
 		orders, err := tapi.ActiveOrdersAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "btc_usd")
 
 		if err != nil {
 			Convey("If error is returned, it should be 'no orders'", func() {
-				So(err, ShouldResemble, errors.New("no orders"))
+				So(err, ShouldResemble, TradeError{msg: "no orders"})
 			})
 		} else {
 			Convey("If no error is returned, 'order' should have length", func() {
@@ -49,13 +59,15 @@ func TestActiveOrders(t *testing.T) {
 }
 
 func TestOrderTrade(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	Convey("Trade new order", t, func() {
 		orderResponse, err := tapi.TradeAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "btc_usd", "buy", 900, 1)
 
 		if err != nil {
 			Convey("If error is returned, it should be 'not enough USD'", func() {
-				So(err, ShouldResemble, errors.New("It is not enough USD for purchase"))
+				So(err, ShouldResemble, TradeError{msg: "It is not enough USD for purchase"})
 			})
 		} else {
 			Convey("If no error is returned, 'btc_usd' amount should appear", func() {
@@ -66,14 +78,16 @@ func TestOrderTrade(t *testing.T) {
 }
 
 func TestOrderInfo(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	orderID := "1"
 	Convey("Get order info", t, func() {
 		orderResponse, err := tapi.OrderInfoAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), orderID)
 
 		if err != nil {
 			Convey("If error is returned, it should be 'invalid order'", func() {
-				So(err, ShouldResemble, errors.New("invalid order"))
+				So(err, ShouldResemble, TradeError{msg: "invalid order"})
 			})
 		} else {
 			Convey("If no error is returned, order information should be returned", func() {
@@ -85,14 +99,16 @@ func TestOrderInfo(t *testing.T) {
 }
 
 func TestCancelOrder(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	orderID := "1"
 	Convey("Cancel order", t, func() {
 		orderResponse, err := tapi.CancelOrderAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), orderID)
 
 		if err != nil {
 			Convey("If error is returned, it should be 'bad status'", func() {
-				So(err, ShouldResemble, errors.New("bad status"))
+				So(err, ShouldResemble, TradeError{msg: "bad status"})
 			})
 		} else {
 			Convey("If no error is returned, same order id should be returned", func() {
@@ -103,7 +119,9 @@ func TestCancelOrder(t *testing.T) {
 }
 
 func TestTradeHistory(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	Convey("Trade history data", t, func() {
 
 		filter := HistoryFilter{}
@@ -111,7 +129,7 @@ func TestTradeHistory(t *testing.T) {
 
 		if err != nil {
 			Convey("If error is returned, it should be 'no trades'", func() {
-				So(err, ShouldResemble, errors.New("no trades"))
+				So(err, ShouldResemble, TradeError{msg: "no trades"})
 			})
 		}
 
@@ -123,7 +141,9 @@ func TestTradeHistory(t *testing.T) {
 }
 
 func TestTransactionHistory(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	Convey("Transaction history data", t, func() {
 
 		filter := HistoryFilter{}
@@ -131,7 +151,7 @@ func TestTransactionHistory(t *testing.T) {
 
 		if err != nil {
 			Convey("If error is returned, it should be 'no transactions'", func() {
-				So(err, ShouldResemble, errors.New("no transactions"))
+				So(err, ShouldResemble, TradeError{msg: "no transactions"})
 			})
 		}
 
@@ -143,14 +163,16 @@ func TestTransactionHistory(t *testing.T) {
 }
 
 func TestWithdrawCoin(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	Convey("Withdraw coin", t, func() {
 
 		response, err := tapi.WithdrawCoinAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "BTC", 0.001, "address")
 
 		if err != nil {
 			Convey("If error is returned, it should be 'api permission'", func() {
-				So(err, ShouldResemble, errors.New("api key dont have withdraw permission"))
+				So(err, ShouldResemble, TradeError{msg: "api key dont have withdraw permission"})
 			})
 		} else {
 			Convey("If no error is returned, withdraw reponse should be returned", func() {
@@ -162,14 +184,16 @@ func TestWithdrawCoin(t *testing.T) {
 }
 
 func TestCreateCoupon(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	Convey("Create coupon", t, func() {
 
 		response, err := tapi.CreateCouponAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "BTC", 0.001)
 
 		if err != nil {
 			Convey("If error is returned, it should be 'api permission'", func() {
-				So(err, ShouldResemble, errors.New("api key dont have coupon permission"))
+				So(err, ShouldResemble, TradeError{msg: "api key dont have coupon permission"})
 			})
 		} else {
 			Convey("If no error is returned, withdraw reponse should be returned", func() {
@@ -181,14 +205,16 @@ func TestCreateCoupon(t *testing.T) {
 }
 
 func TestRedeemCoupon(t *testing.T) {
-	time.Sleep(SLEEP * time.Second)
+
+	CheckAPI(t)
+
 	Convey("Redeem coupon", t, func() {
 
 		response, err := tapi.RedeemCouponAuth(os.Getenv("API_KEY_TEST"), os.Getenv("API_SECRET_TEST"), "BTC-USD-XYZ")
 
 		if err != nil {
 			Convey("If error is returned, it should be 'api permission'", func() {
-				So(err, ShouldResemble, errors.New("api key dont have coupon permission"))
+				So(err, ShouldResemble, TradeError{msg: "api key dont have coupon permission"})
 			})
 		} else {
 			Convey("If no error is returned, withdraw reponse should be returned", func() {
