@@ -29,11 +29,14 @@ func (api *PublicAPI) Info() (Info, error) {
 
 // Ticker provides all the information about currently active pairs, such as: the maximum price, the minimum price, average price, trade volume, trade volume in currency, the last trade, Buy and Sell price.
 // All information is provided over the past 24 hours.
-func (api *PublicAPI) Ticker(currency []string) (Ticker, error) {
+func (api *PublicAPI) Ticker(currency []string, ignoreInvalid ...bool) (Ticker, error) {
 
 	url := apiURL + "ticker/"
 	for _, c := range currency {
 		url = url + c + "-"
+	}
+	if len(ignoreInvalid) > 0 && ignoreInvalid[0] {
+		url += "?ignore_invalid=1"
 	}
 	r, err := http.Get(url)
 
