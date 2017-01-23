@@ -23,6 +23,27 @@ func TestTicker(t *testing.T) {
 		})
 	})
 
+	Convey("Ticker data for BTC-USD and BTC-BTC", t, func() {
+		_, err := api.Ticker([]string{"btc_usd", "btc_btc"})
+
+		Convey("Error should occur", func() {
+			So(err, ShouldNotBeNil)
+		})
+	})
+
+	Convey("Ticker data for BTC-USD and BTC-BTC with the ignore invalid flag", t, func() {
+		tickers, err := api.Ticker([]string{"btc_usd", "btc_btc"}, true)
+
+		Convey("No error should occur", func() {
+			So(err, ShouldBeNil)
+		})
+
+		Convey("One ticker information should be returned", func() {
+			So(tickers, ShouldHaveSameTypeAs, Ticker{})
+			So(tickers, ShouldContainKey, "btc_usd")
+			So(tickers["btc_usd"], ShouldHaveSameTypeAs, TickerPair{})
+		})
+	})
 }
 
 func TestInfo(t *testing.T) {
