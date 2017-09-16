@@ -1,4 +1,4 @@
-package btce
+package wex
 
 import (
 	"os"

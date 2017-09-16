@@ -1,4 +1,4 @@
-package btce
+package wex
 
 import (
 	"bytes"
@@ -25,7 +25,7 @@ type TradeAPI struct {
 	lastNonce  int64
 }
 
-const tradeURL = "https://btc-e.com/tapi"
+const tradeURL = "https://wex.nz/tapi"
 
 // Auth provides API key and secret setting for Trade API
 func (tapi *TradeAPI) Auth(key string, secret string) {
