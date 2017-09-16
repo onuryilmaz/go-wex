@@ -175,7 +175,7 @@ func TestWithdrawCoin(t *testing.T) {
 				So(err, ShouldResemble, TradeError{msg: "api key dont have withdraw permission"})
 			})
 		} else {
-			Convey("If no error is returned, withdraw reponse should be returned", func() {
+			Convey("If no error is returned, withdraw response should be returned", func() {
 				So(response.TransactionID, ShouldBeGreaterThan, 0)
 				So(response.AmountSent, ShouldBeGreaterThanOrEqualTo, 0)
 			})
@@ -196,7 +196,7 @@ func TestCreateCoupon(t *testing.T) {
 				So(err, ShouldResemble, TradeError{msg: "api key dont have coupon permission"})
 			})
 		} else {
-			Convey("If no error is returned, withdraw reponse should be returned", func() {
+			Convey("If no error is returned, withdraw response should be returned", func() {
 				So(response.Coupon, ShouldNotBeBlank)
 				So(response.TransactionID, ShouldBeGreaterThan, 0)
 			})
@@ -217,7 +217,7 @@ func TestRedeemCoupon(t *testing.T) {
 				So(err, ShouldResemble, TradeError{msg: "api key dont have coupon permission"})
 			})
 		} else {
-			Convey("If no error is returned, withdraw reponse should be returned", func() {
+			Convey("If no error is returned, withdraw response should be returned", func() {
 				So(response.CouponCurrency, ShouldNotBeBlank)
 				So(response.TransactionID, ShouldBeGreaterThan, 0)
 			})
