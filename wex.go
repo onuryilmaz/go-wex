@@ -6,7 +6,7 @@
 //
 // 	import (
 //		"fmt"
-//		wex "github.com/KopfKrieg/go-wex"
+//		wex "github.com/onuryilmaz/go-wex"
 // 	)
 //
 // 	func main() {
