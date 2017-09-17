@@ -1,4 +1,4 @@
-package btce
+package wex
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 // PublicAPI provides access to such information as tickers of currency pairs, active orders on different pairs, the latest trades for each pair etc.
 type PublicAPI struct{}
 
-const apiURL = "https://btc-e.com/api/3/"
+const apiURL = "https://wex.nz/api/3/"
 
 // Info provides all the information about currently active pairs, such as the maximum number of digits after the decimal point, the minimum price, the maximum price, the minimum transaction size, whether the pair is hidden, the commission for each pair.
 func (api *PublicAPI) Info() (Info, error) {

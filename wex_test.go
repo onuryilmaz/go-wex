@@ -1,22 +1,22 @@
-package btce
+package wex
 
 import (
 	. "github.com/smartystreets/goconvey/convey"
 	"testing"
 )
 
-var btce = API{}
+var wex = API{}
 
-func TestBTCE(t *testing.T) {
+func TestWEX(t *testing.T) {
 
-	Convey("BTCE instance created", t, func() {
+	Convey("WEX instance created", t, func() {
 
 		Convey("Public API should be available", func() {
-			So(btce.Public, ShouldNotBeNil)
+			So(wex.Public, ShouldNotBeNil)
 		})
 
 		Convey("Trade API should be available", func() {
-			So(btce.Trade, ShouldNotBeNil)
+			So(wex.Trade, ShouldNotBeNil)
 		})
 	})
 }

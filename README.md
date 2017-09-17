@@ -1,10 +1,10 @@
-[![Build Status](https://travis-ci.org/onuryilmaz/go-btce.svg?branch=master)](https://travis-ci.org/onuryilmaz/go-btce)
-[![Go Report Card](https://goreportcard.com/badge/github.com/onuryilmaz/go-btce)](https://goreportcard.com/report/github.com/onuryilmaz/go-btce)
-[![GoDoc](https://godoc.org/github.com/onuryilmaz/go-btce?status.svg)](https://godoc.org/github.com/onuryilmaz/go-btce)
-[![Coverage Status](https://coveralls.io/repos/github/onuryilmaz/go-btce/badge.svg?branch=master)](https://coveralls.io/github/onuryilmaz/go-btce?branch=master)
+[![Build Status](https://travis-ci.org/onuryilmaz/go-wex.svg?branch=master)](https://travis-ci.org/onuryilmaz/go-wex)
+[![Go Report Card](https://goreportcard.com/badge/github.com/onuryilmaz/go-wex)](https://goreportcard.com/report/github.com/onuryilmaz/go-wex)
+[![GoDoc](https://godoc.org/github.com/onuryilmaz/go-wex?status.svg)](https://godoc.org/github.com/onuryilmaz/go-wex)
+[![Coverage Status](https://coveralls.io/repos/github/onuryilmaz/go-wex/badge.svg?branch=master)](https://coveralls.io/github/onuryilmaz/go-wex?branch=master)
 
-## BTC-E API Go Client
-Native Go client for interacting with [BTC-E](https://btc-e.com/) [Public API v3](https://btc-e.com/api/3/docs) and [Trading API](https://btc-e.com/tapi/docs).
+## WEX (former BTC-E) API Go Client
+Native Go client for interacting with [WEX](https://wex.nz/) [Public API v3](https://wex.nz/api/3/docs) and [Trading API](https://wex.nz/tapi/docs).
 
 ### Usage
 
@@ -13,12 +13,12 @@ package main
 
 import (
 	"fmt"
-	btc "github.com/onuryilmaz/go-btce"
+	wex "github.com/onuryilmaz/go-wex"
 )
 
 func main() {
 
-	api := btc.API{}
+	api := wex.API{}
 
 	ticker, err := api.Public.Ticker([]string{"btc_usd"})
 	if err == nil {

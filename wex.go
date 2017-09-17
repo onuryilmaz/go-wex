@@ -1,4 +1,4 @@
-// Package btce provides native Go client for interacting with BTC-E Public API v3 and Trading API.
+// Package wex provides native Go client for interacting with WEX (former BTC-E) Public API v3 and Trading API.
 //
 // Example usage:
 //
@@ -6,12 +6,12 @@
 //
 // 	import (
 //		"fmt"
-//		btc "github.com/onuryilmaz/go-btce"
+//		wex "github.com/onuryilmaz/go-wex"
 // 	)
 //
 // 	func main() {
 //
-//		api := btc.API{}
+//		api := wex.API{}
 //
 //		ticker, err := api.Public.Ticker([]string{"btc_usd"})
 //		if err == nil {
@@ -24,7 +24,7 @@
 //			fmt.Printf("BTC amount: %.3f \n", info.Funds["btc"])
 //		}
 // 	}
-package btce
+package wex
 
 // API allows to use public and trade APIs of BTC-E
 type API struct {
